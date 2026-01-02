@@ -1,0 +1,98 @@
+# Imagen DevSecOps personalizada (Java + Node + Sonar + Trivy + ZAP)
+image: ci-tools:latest
+
+stages:
+  - test
+  - build
+  - sast
+  - sca
+  - dast
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+# ---------------------------------------
+# 1. TEST
+# ---------------------------------------
+test_app:
+  stage: test
+  tags:
+    - docker
+  script:
+    - echo "No hay tests aún"
+
+# ---------------------------------------
+# 2. BUILD DOCKER IMAGE (Docker-in-Docker)
+# ---------------------------------------
+build_image:
+  stage: build
+  tags:
+    - docker
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  script:
+    - docker build -t proyecto-final ./final
+
+# ---------------------------------------
+# 3. SAST — SONARQUBE
+# ---------------------------------------
+
+# ---------------------------------------
+# 4. SCA — TRIVY (Filesystem)
+# ---------------------------------------
+sca_trivy_fs:
+  stage: sca
+  tags:
+    - docker
+  script:
+    - trivy fs --format table --output trivy-fs.txt ./final
+  artifacts:
+    paths:
+      - trivy-fs.txt
+    expire_in: 1 week
+
+# ---------------------------------------
+# 4. SCA — TRIVY (Image)
+# ---------------------------------------
+sca_trivy_image:
+  stage: sca
+  tags:
+    - docker
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  script:
+    - docker build -t proyecto-final ./final
+    - trivy image --format table --output trivy-image.txt proyecto-final
+  artifacts:
+    paths:
+      - trivy-image.txt
+    expire_in: 1 week
+
+# ---------------------------------------
+# 5. OWASP ZAP — DAST
+# ---------------------------------------
+dast_zap:
+  stage: dast
+  tags:
+    - docker
+  script:
+    - echo "Iniciando análisis ZAP"
+    - zap.sh -cmd -quickurl http://20.55.251.107:8080 -quickout zap-report.html
+  artifacts:
+    paths:
+      - zap-report.html
+    expire_in: 1 week
+
+# ---------------------------------------
+# 6. DEPLOY MANUAL
+# ---------------------------------------
+deploy_app:
+  stage: deploy
+  tags:
+    - docker
+  script:
+    - echo "Deploy final (manual)"
+  when: manual

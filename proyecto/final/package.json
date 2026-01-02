@@ -1,0 +1,8 @@
+{
+  "name": "proyecto-final",
+  "version": "1.0.0",
+  "main": "prueba.js",
+  "dependencies": {
+    "express": "4.17.1"
+  }
+}
