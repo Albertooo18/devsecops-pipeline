@@ -31,15 +31,16 @@ originally on a cloud-based virtual machine (Azure).
 devsecops-pipeline/
 ├── docker-compose.yml
 ├── ci-image/
-│ └── Dockerfile
+│   └── Dockerfile
 ├── proyecto/
-│ └── final/
-│ ├── Dockerfile
-│ ├── package.json
-│ ├── prueba.js
-│ └── sonar-project.properties
+│   └── final/
+│       ├── Dockerfile
+│       ├── package.json
+│       ├── prueba.js
+│       └── sonar-project.properties
 └── docs/
-└── Proyecto_DevSecOps.pdf
+    └── Proyecto_DevSecOps.pdf
+
 
 ## 📄  Documentation
 A detailed academic report explaining the architecture, methodology and results
